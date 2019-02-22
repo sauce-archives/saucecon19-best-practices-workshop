@@ -1,60 +1,22 @@
 package exercises;
 
-import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
 
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
+import pages.LoginPage;
+
 import java.util.concurrent.TimeUnit;
 
-public class FullJourneyTest {
-    private WebDriver driver;
-
+public class CheckoutFeatureTest extends BaseTest{
     @Test
-    public void fullCustomerJourney(Method method) throws MalformedURLException {
-
-        // Input your SauceLabs Credentials
-        String sauceUsername = System.getenv("SAUCE_USERNAME");
-        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
-
-        MutableCapabilities capabilities = new MutableCapabilities();
-
-        //sets browser to Safari
-        capabilities.setCapability("browserName", "Safari");
-
-        //sets operating system to macOS version 10.13
-        capabilities.setCapability("platform", "macOS 10.13");
-
-        //sets the browser version to 11.1
-        capabilities.setCapability("version", "11.1");
-
-        //sets your test case name so that it shows up in Sauce Labs
-        capabilities.setCapability("name", method.getName());
-
-        //instantiates a remote WebDriver object with your desired capabilities
-        driver = new RemoteWebDriver(new URL("https://" + sauceUsername + ":" + sauceAccessKey+ "@ondemand.saucelabs.com/wd/hub"), capabilities);
-
-        //navigate to the url of the Sauce Labs Sample app
-        driver.navigate().to("https://www.saucedemo.com");
-        // navigate to desired page
-        driver.get("https://www.saucedemo.com");
+    public void ShouldBeAbleToCheckoutWithItems() {
 
         // Specify Data
         String firstname = "john";
         String lastname = "doe";
         String postal = "94040";
 
-        // Ignore the following selectors
-        String username = "standard_user";
-        String password = "secret_sauce";
-        String userField = "[data-test='username']";
-        String passField = "[data-test='password']";
-        String loginBtn = "[value='LOGIN']";
         String backpack = "div:nth-child(1) > div.pricebar > button";
         String jacket = "div:nth-child(4) > div.pricebar > button";
         String cart = "#shopping_cart_container";
@@ -66,27 +28,22 @@ public class FullJourneyTest {
         String postalField= "[data-test='postalCode']";
         String cartCheckout = "[value='CONTINUE']";
         String finished = "a.cart_checkout_link";
-        String inventoryPage = "https://www.saucedemo.com/inventory.html";
-        String cartPage = "https://www.saucedemo.com/cart.html";
-        String checkout1 = "https://www.saucedemo.com/checkout-step-one.html";
-        String checkout2 = "https://www.saucedemo.com/checkout-step-two.html";
         String complete = "https://www.saucedemo.com/checkout-complete.html";
 
         // wait 5 seconds
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
-        // send username keystrokes
-        driver.findElement(By.cssSelector(userField)).sendKeys(username);
+        //navigate to the url of the Sauce Labs Sample app
+        LoginPage loginPage = new LoginPage(driver);
+        loginPage.visit();
 
-        // send password keystrokes
-        driver.findElement(By.cssSelector(passField)).sendKeys(password);
+        // Ignore the following selectors
+        String username = "standard_user";
+        String password = "secret_sauce";
+        loginPage.login(username, password);
 
-        // click login button to submit keystrokes
-        driver.findElement(By.cssSelector(loginBtn)).click();
+        // Assert that the url is on the inventory page
+        Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
 
-        // wait 5 seconds
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
-
-        // add items to the cart
         driver.findElement(By.cssSelector(backpack)).click();
         driver.findElement(By.cssSelector(jacket)).click();
 
@@ -140,8 +97,5 @@ public class FullJourneyTest {
 
         // assert that the test is finished by checking the last page's URL
         Assert.assertEquals(driver.getCurrentUrl(), complete);
-
-        // Then quit the driver session
-        driver.quit();
     }
 }
