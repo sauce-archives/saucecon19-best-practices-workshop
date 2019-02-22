@@ -1,26 +1,25 @@
 package exercises;
 
-import org.testng.Assert;
-import org.testng.annotations.*;
-import org.testng.xml.dom.Tag;
-import org.testng.ITestResult;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.MutableCapabilities;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testng.Assert;
+import org.testng.ITestResult;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+import org.testng.xml.dom.Tag;
+import pages.InventoryPage;
 
-
-import pages.LogInPage;
-
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.lang.reflect.Method;
 
-
-public class LogInTest  {
+public class InventoryTest {
     protected WebDriver driver;
+
     @BeforeMethod
     public void setup(Method method) throws MalformedURLException {
         String sauceUsername = System.getenv("SAUCE_USERNAME");
@@ -40,7 +39,7 @@ public class LogInTest  {
         sauceOpts.setCapability("tags", "['best-practices', 'saucecon19']");
 
         MutableCapabilities caps = new MutableCapabilities();
-        caps.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
+        caps.setCapability(ChromeOptions.CAPABILITY, chromeOpts);
         caps.setCapability("sauce:options", sauceOpts);
         caps.setCapability("browserName", "googlechrome");
         caps.setCapability("browserVersion", "71.0");
@@ -51,13 +50,27 @@ public class LogInTest  {
         driver = new RemoteWebDriver(url, caps);
     }
 
-    @Tag(name = "logInSuccessfully()")
+    @Tag(name = "oneItemInCart()")
     @Test
-    /** Tests for a successful login **/
-    public void logInSuccessfully(Method method) {
-        LogInPage logInPage = LogInPage.visit(driver);
-        logInPage.signInSuccessfully();
-        Assert.assertEquals(driver.getCurrentUrl(), "https://www.saucedemo.com/inventory.html");
+    /** Tests placing one specific item in the cart **/
+    public void oneItemInCart(Method method) {
+        InventoryPage inventoryPage = InventoryPage.visit(driver);
+        inventoryPage.addOneItem();
+        Assert.assertEquals(inventoryPage.itemCount(), "1");
+        inventoryPage.checkout();
+        Assert.assertEquals(driver.getCurrentUrl(), "https://www.saucedemo.com/cart.html");
+
+    }
+
+    @Tag(name = "twoItemsInCart()")
+    @Test
+    /** Tests placing two specific items in the cart **/
+    public void twoItemsInCart(Method method) {
+        InventoryPage inventoryPage = InventoryPage.visit(driver);
+        inventoryPage.addTwoItems();
+        Assert.assertEquals(inventoryPage.itemCount(), "2");
+        inventoryPage.checkout();
+        Assert.assertEquals(driver.getCurrentUrl(), "https://www.saucedemo.com/cart.html");
     }
 
     @AfterMethod
