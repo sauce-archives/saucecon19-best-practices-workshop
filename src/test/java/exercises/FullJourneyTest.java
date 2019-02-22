@@ -19,8 +19,8 @@ public class FullJourneyTest {
     public void fullCustomerJourney(Method method) throws MalformedURLException {
 
         // Input your SauceLabs Credentials
-        String sauceUserName = "SAUCE_USERNAME";
-        String sauceAccessKey = "SAUCE_ACCESS_KEY";
+        String sauceUsername = System.getenv("SAUCE_USERNAME");
+        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
 
         MutableCapabilities capabilities = new MutableCapabilities();
 
@@ -37,7 +37,7 @@ public class FullJourneyTest {
         capabilities.setCapability("name", method.getName());
 
         //instantiates a remote WebDriver object with your desired capabilities
-        driver = new RemoteWebDriver(new URL("https://" + sauceUserName + ":" + sauceAccessKey+ "@ondemand.saucelabs.com/wd/hub"), capabilities);
+        driver = new RemoteWebDriver(new URL("https://" + sauceUsername + ":" + sauceAccessKey+ "@ondemand.saucelabs.com/wd/hub"), capabilities);
 
         //navigate to the url of the Sauce Labs Sample app
         driver.navigate().to("https://www.saucedemo.com");
@@ -74,6 +74,7 @@ public class FullJourneyTest {
 
         // wait 5 seconds
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
+
         // send username keystrokes
         driver.findElement(By.cssSelector(userField)).sendKeys(username);
 

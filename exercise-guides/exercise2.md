@@ -18,10 +18,18 @@
     ```
 5. Identify any repeatable test actions and create a method for each action. For example, a method for entering user information into a contact form could look like this:
     ```
-    void logIn(By locator, String text) {
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        driver.findElement(locator).sendKeys(text);
+    public void signInSuccessfully() {
+        logIn(driver);
     }
+    
+    private void logIn(WebDriver driver) {
+        String username = "standard_user";
+        String password = "secret_sauce";
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+        driver.findElement(userField).sendKeys(username);
+        driver.findElement(passwordField).sendKeys(password);
+        driver.findElement(loginButton).click();
+    } 
     ```
 6. Add the locators as private variables, for example:
     ```
@@ -34,57 +42,66 @@
     private By loginButton = By.className(
     "login-button");
     ```
+    
     <br />
     
 ## Part Two: Create a `LogInTest` Class
 1. Open **`LogInTest`** and add the following `@BeforeMethod` and `@AfterMethod` classes:
     In **`LogInTest`** add the following methods:
     ```
-    @BeforeMethod
-    public void setup(Method method) throws MalformedURLException {
-        String username = System.getenv("SAUCE_USERNAME");
-        String accessKey = System.getenv("SAUCE_ACCESS_KEY");
-        String methodName = method.getName();
-
-        ChromeOptions chromeOpts = new ChromeOptions();
-        chromeOpts.setExperimentalOption("w3c", true);
-
-        MutableCapabilities sauceOpts = new MutableCapabilities();
-        sauceOpts.setCapability("name", methodName);
-        sauceOpts.setCapability("seleniumVersion", "3.11.0");
-        sauceOpts.setCapability("user", username);
-        sauceOpts.setCapability("accessKey", accessKey);
-
-        MutableCapabilities caps = new MutableCapabilities();
-        caps.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
-        caps.setCapability("sauce:options", sauceOpts);
-        caps.setCapability("browserName", "googlechrome");
-        caps.setCapability("browserVersion", "61.0");
-        caps.setCapability("platformName", "windows 10");
+    public class LogInTest  {
+        protected WebDriver driver;
+        @BeforeMethod
+        public void setup(Method method) throws MalformedURLException {
+            String username = System.getenv("SAUCE_USERNAME");
+            String accessKey = System.getenv("SAUCE_ACCESS_KEY");
+            String methodName = method.getName();
     
+            ChromeOptions chromeOpts = new ChromeOptions();
+            chromeOpts.setExperimentalOption("w3c", true);
+    
+            MutableCapabilities sauceOpts = new MutableCapabilities();
+            sauceOpts.setCapability("username", username);
+            sauceOpts.setCapability("accessKey", accessKey);
+            sauceOpts.setCapability("name", methodName);
+            sauceOpts.setCapability("seleniumVersion", "3.141.59");
+            sauceOpts.setCapability("name", methodName);
+            sauceOpts.setCapability("build", "saucecon19-best-practices");
+            sauceOpts.setCapability("tags", "['best-practices', 'saucecon19']");
+    
+            MutableCapabilities caps = new MutableCapabilities();
+            caps.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
+            caps.setCapability("sauce:options", sauceOpts);
+            caps.setCapability("browserName", "googlechrome");
+            caps.setCapability("browserVersion", "71.0");
+            caps.setCapability("platformName", "windows 10");
+    
+            String sauceUrl = "https://ondemand.saucelabs.com:443/wd/hub";
+            URL url = new URL(sauceUrl);
+            driver = new RemoteWebDriver(url, caps);
+        }
     ...
     
-    @AfterMethod
-    public void teardown(ITestResult result) {
-        ((JavascriptExecutor)driver).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
-        driver.quit();
+        @AfterMethod
+        public void teardown(ITestResult result) {
+            ((JavascriptExecutor)driver).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
+            driver.quit();
+        }
     }
     ```
 2. Import the **`LogInPage`** and reference the `@Test` class method. For example:
     ```
-    import pages.LogInPage;
+    import pages.LoginPage;
     ...
     public class LogInTest {
         
-        @Test
-        public void logInSuccessfully() {
-            LogInPage logInPage = LogInPage.visit(driver);
-            logInPage.logIn(userField, username);
-            logInPage.logIn(passField, password);
-            logInPage.submit(loginBtn);    
-            Assertions.assertEquals(driver.getCurrentUrl(),
-            "https://www.saucedemo.com/inventory.html");
-        }
+    @Tag(name = "logInSuccessfully()")
+    @Test
+    /** Tests for a successful login **/
+    public void logInSuccessfully(Method method) {
+        LogInPage logInPage = LogInPage.visit(driver);
+        logInPage.signInSuccessfully();
+        Assert.assertEquals(driver.getCurrentUrl(), "https://www.saucedemo.com/inventory.html");
     }
     ...
     ```
