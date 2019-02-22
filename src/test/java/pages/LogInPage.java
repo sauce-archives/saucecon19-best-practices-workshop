@@ -4,8 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import java.util.concurrent.TimeUnit;
 
-public class LogInPage {
-    WebDriver driver;
+public class LogInPage extends BasePage {
     private By userField = By.cssSelector("[placeholder = 'Username']");
     private By passwordField = By.cssSelector("[placeholder = 'Password']");
     private By loginButton = By.className("login-button");
@@ -28,8 +27,8 @@ public class LogInPage {
         String username = "standard_user";
         String password = "secret_sauce";
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        driver.findElement(userField).sendKeys(username);
-        driver.findElement(passwordField).sendKeys(password);
-        driver.findElement(loginButton).click();
+        sendKeys(userField, username);
+        sendKeys(passwordField, password);
+        click(loginButton);
     }
 }
