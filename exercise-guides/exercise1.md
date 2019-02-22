@@ -18,29 +18,49 @@
     ``` 
     you should see the results appear in your Sauce Labs Test Dashboard
     
-##Part Two: Set Environment Variables in a Run Configuration
+##Part Two: Set Environment Variables
     
 6. Next, modify the `sauceUserName` and `sauceAccessKey` variables to use Environment Variables:
 
-    ```$xslt
+    ```
        String sauceUserName = System.getenv("SAUCE_USERNAME");
        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
     ```
-7. Create a new Run Configuration in IntelliJ
-    * Select **Run > Edit Configurations**
-    * Select the `+` Symbol to add a new configuration
-    * Name the configuration **Exercise1**
-    * Ensure the following: `test.exercises.FullJourneyTest`, exists in the **Class** field
-    * Select the folder icon next to the **Environment variables** field
+7. At the bottom of IntelliJ select the Terminal tab:
+8. In the Terminal set your Sauce Labs Environment variables:   
+   ###### Mac OSX:
+   ```
+   $ export SAUCE_USERNAME="your saucelabs username"
+   $ export SAUCE_ACCESS_KEY="your saucelabs API access Key"
+   ```
+   ###### Windows:
+   ```
+   > set SAUCE_USERNAME="your saucelabs username"
+   > set SAUCE_ACCESS_KEY="your saucelabs API access Key"
+   ```
+   > To set an environment variables permanently in Windows, you must append it to the `PATH` variable.
+   > Go to "Control Panel > System > Windows version > Advanced System Settings > Environment Variables > System Variables > Edit > New. Then enter the "Name" and "Value"
+9. Test the environment variables
+    ###### Mac OSX:
+    ```
+    $ echo $SAUCE_USERNAME
+    $ echo $SAUCE_ACCESS_KEY
+    ```
+    ###### Windows:
+    ```
+    echo %SAUCE_USERNAME%
+    echo %SAUCE_ACCESS_KEY%
+    ```
     
-        ![Environment Variables IntelliJ](images/env-var-field.png)
-        
-    * Add `SAUCE_USERNAME` and `SAUCE_ACCESS_KEY` with approrpirate values
+    > To refresh a bash shell if you don't see the values run any of the following commands: 
+    >  * `$ source ~/.bashrc`
+    >  * `$ source ~/.bash_profile`
+    >  * `$ source /etc/profile`
     
-        ![Sauce Credentials](images/sauce-credentials.png)
-        
-    * Save and Exit 
+ 8. Run your test using Maven
+    ```
+    mvn test
+    ```
+    You should see the following build info appear (after sometime) in your console:
     
- 8. Run your test script again using the IntelliJ toolbar
-    
-    ![Run Toolbar](images/run-toolbar.png)
+    ![Successful Test Build Info](images/ex1-test-build.png)

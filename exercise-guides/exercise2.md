@@ -91,7 +91,7 @@
     ```
 2. Import the **`LogInPage`** and reference the `@Test` class method. For example:
     ```
-    import pages.LogInPage;
+    import pages.LoginPage;
     ...
     public class LogInTest {
         
