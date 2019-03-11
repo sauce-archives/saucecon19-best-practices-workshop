@@ -1,43 +1,70 @@
-# Exercise 4: Implement Explicit Waits
-## Part One: Identify Implicit Waits
-1. Checkout branch `04_explicit_waits `.
-2. Open **`LogInPage`** and navigate to the **`logIn`** method.
-3. As it stands, our wait strategy is inefficient because of: **`implicitlyWait`**. This means our session hangs for a broad 5 seconds after the preceding command and adds unecessary overhead to our test execution. A better strategy is to wait until a specific element renders on the page, then proceed to the next command. In other words, our wait strategy should transform as follows:
-    * Before
+# Exercise 4: Configure Atomic Tests
+
+## Part One: Modify `ConfirmationPage`
+1. Checkout the branch `04_configure_atomic_tests`.
+2. Open `ConfirmationPage` in `src > test > java > pages`.
+3. Add the following class methods:
     ```
-    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-    ```
-    
-    * After
-    ```
-    WebDriverWait wait = new WebDriverWait(driver, 5);
-    wait.until(ExpectedConditions
-            .presenceOfElementLocated(locator));
-    
-    ```
-    However this still adds a bit of duplication. The best strategy is to add the **`WebDriverWait`** command to the **`BasePage`** class to avoid further duplication.
-4. In the **`BasePage`** object, create a method that waits for specific elements to render based on a relevant `locator`. Below is an example of an explicit wait method:
-    ```
-    private void waitForElement(By locator) {
-        WebDriverWait wait = new WebDriverWait(driver, 5);
-        wait.until(ExpectedConditions.
-        presenceOfElementLocated(locator));
+    public void visit() {
+        driver.get("https://www.saucedemo.com/checkout-step-two.html");
     }
     ```
-    > Note: the `ExpectedConditions` method must be imported using: `import org.openqa.selenium.support.ui.ExpectedConditions`
+    ```
+    public Boolean hasItems() {
+        String cartBadge = "shopping_cart_badge";
+        return Integer.parseInt(driver.findElement(By.className(cartBadge)).getText()) > 0;
+    }
+    ```
+    ```
+    public CheckoutCompletePage finishCheckout() {
+        String checkoutLink = "cart_checkout_link";
+        driver.findElement(By.className(checkoutLink)).click();
+        return new CheckoutCompletePage;
+    }
+    ```
+4. Open **`CheckoutFeatureTest`** located in `src > test > java > exercises`.
+5. You'll notice that the **`ShouldBeAbleToCheckout()`** class method steps through many pages to get to the checkout function. The existing test flow works like this:
+    * User logs in
+    * Adds some items to the cart
+    * Clicks the cart icon to proceed to checkout
+
+This approach is under-optimized because our tests shouldn't rely on the assertions of other tests and it's unecessary to travel through each individual page to reach that feature. Therefore if we're only testing features on a specific page, we can modify the page state using the **`JavaScriptExecutor`**.
     
-2. In **`BasePage`**, check each method and refactor the following wherever it exists:
-    * Before
-    ```
-    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-    ```
-    * After
-    ```
-    waitForElement(locator);
-    ``` 
-
-3. Ensure each command replacement has a relevant `locator`
-4. Save and run `mvn test`
-5. Checkout branch `05_configure_atomic_tests` to see the answers.
-
 <br />
+    
+## Part Two: Implement the `JavascriptExecutor` to Bypass Pages
+1. Go back to **`ConfirmationPage`** and add the following class method:
+    ``` 
+    public void setCartState() {
+        driver.navigate().refresh();
+    }
+    ```
+2. In **`setCartState()`** add the following **`JavaScriptExecutor`** command to bypass logging in through the **`LoginPage`** object:
+    ```
+    ((JavascriptExecutor)driver).executeScript("window.sessionStorage.setItem('standard-username', 'standard-user')");
+    ```
+3. Then add another **`JavaScriptExecutor`** command to bypass adding items to the cart through the **`InventoryPage`** object:
+    ```
+    ((JavascriptExecutor)driver).executeScript("window.sessionStorage.setItem('cart-contents', '[4,1]')");
+    ```
+4. In **`CheckoutFeatureTest`**, delete the existing commands and add the following:
+    ```
+    @Test
+    public void ShouldBeAbleToCheckoutWithItems() {
+        // wait 5 seconds
+        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
+        ConfirmationPage confirmationPage = new ConfirmationPage(driver);
+        confirmationPage.visit();
+        confirmationPage.setCartState();
+        confirmationPage.checkout();
+        Assert.assertTrue(confirmationPage.hasItems());
+    }
+    ```
+5. Save all and run the following command to ensure the build passes:
+    ```
+    mvn test
+    ```
+6. Use `git stash` or `git commit` to discard or save your changes. Checkout the next branch to proceed to the next exercise
+    ```
+    git checkout 05_create_base_page
+    ```

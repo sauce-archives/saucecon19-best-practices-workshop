@@ -1,76 +1,48 @@
 # Exercise 3: Remove Duplication
 
-## Part One: Identify Duplicate Test Code
 1. Checkout branch `03_remove_duplication`.
-2. Open the new page object called **`InventoryPage`** in `src > test > java > pages`.
-3. Note the four class methods:
-    * `addOneItem`: adds one item to the shopping cart
-    * `addTwoItem`: adds two items to the shopping cart
-    * `itemCount`: counts items in the shopping cart
-    * `checkout`: proceeds to the checkout page.
-4. Open **`InventoryTest`** in `src > test > java > exercises`.
-5. There is now duplicate code that also exists in **`LogInTest`**, specifically the `setup()` and `teardown()` methods. Next, we will create a `BaseTest` class that executes these prerequisite and postrequisite test actions.
-
-<br />
-
-## Part Two: Create a `BaseTest` Class
-1. Create a class called **`BaseTest`** in `src > test > java > exercises`.
-2. Move the **`setup()`** and **`teardown()`** methods that exist in  **`LogInTest`** and **`InventoryTest`** into **`BaseTest`**. 
-3. Back in **`LogInTest`** (and **`InventoryTest`**) add the following:
+2. Open the new test class called **`CheckoutFeatureTest`** in `src > test > java > exercises`.
+3. There is duplicate code that exists in **`LoginFeatureTest`**, specifically the `setup()` and `teardown()` methods. 
+4. Create a `BaseTest` class that executes these prerequisite and postrequisite test actions.
+5. Remove the `setup()` and `teardown()` methods from `LoginFeatureTest` and `CheckoutFeatureTest` and place them into `BaseTest`
+6. Back in `LoginFeatureTest` and `CheckoutFeatureTest`, extend `BaseTest` like so:
     ```
-    public class LogInTest extends BaseTest {
+    public class LoginFeatureTest extends BaseTest {
     ...
     }
     ```
-4. Remove the **`setup()`** and **`teardown()`** methods in **`LogInTest`** and **`InventoryTest`**.
+7. Delete `FullJourneyTest` and test the changes:
+    ```
+    mvn test
+    ```
+8. If both tests run fine, use `git commit` or `git stash`, then checkout the next branch to proceed to the next exercise:
 
-<br />
-
-## Part Three: Create a `BasePage` Object
-1. Identify duplication in any method that uses common Selenium **`driver`** commands such as the following in **`LogInPage`** and **`InventoryPage`**:
-    * `.findElement()`
-    * `.click()`
-    * `.sendKeys()`
-2. Create a class called **`BasePage`** in `src > test > java > pages`.   
-3. Create new class methods in `BasePage` that represent common Selenium **`driver`** commands, for example:
-    
-    * Find an element on a page
-        ```
-        WebElement findBy(By locator) {
-            return driver.findElement(locator);
-        }
-        ```
-    * Click on an element
-        ```
-        void click(By locator) {
-            driver.manage().timeouts().implicitlyWait(5, 
-            TimeUnit.SECONDS) ;
-            findBy(locator).click();
-        }
-        ```
-    * Submit keystrokes
-        ```
-        void sendKeys(By locator, String text) {
-            driver.manage().timeouts().implicitlyWait(5, 
-            TimeUnit.SECONDS) ;
-            findBy(locator).sendKeys(text);
-        }
-        ```
-4. Use the class methods in **`BasePage`** to refactor duplicate Selenium **`driver`** commands in both **`LogInPage`** and **`InventoryPage`**, for example:
-    * Before
-        ```
-        void logIn(By locator){
-            driver.findElement(userField).sendKeys(username);
-            driver.findElement(passField).sendKeys(password);
-            driver.findElement(logInButton).click();
-        }
-        ```
-    * After
-        ```
-        void logIn(By locator){
-            sendKeys(userField, username);
-            sendKeys(passField, password);
-            click(logInButton);
-        }
-        ```
-5. Checkout branch `04_explicit_waits` to see the complete examples
+## Part Two: Cross Browser Testing
+Next we will update our `capabilities` in `BaseTest` to test using the latest version of Google Chrome, which means we have to modify our code a bit to comply with the new `W3C` protocol.
+1. Add a second `MutableCapabilities` object in the `setup()` method with the following details:
+    ```
+    MutableCapabilities sauceOpts = new MutableCapabilities();
+    sauceOpts.setCapability("username", sauceUsername);
+    sauceOpts.setCapability("accessKey", sauceAccessKey);
+    sauceOpts.setCapability("name", method.getName());
+    sauceOpts.setCapability("seleniumVersion", "3.141.59");
+    sauceOpts.setCapability("build", "saucecon19-best-practices");
+    sauceOpts.setCapability("tags", "['best-practices', 'saucecon19']");
+    ```
+2. Next, modify the existing `MutableCapabilities` object called `capabilities with the following:
+    ```
+    MutableCapabilities capabilities = new MutableCapabilities();
+    capabilities.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
+    capabilities.setCapability("sauce:options", sauceOpts);
+    capabilities.setCapability("browserName", "googlechrome");
+    capabilities.setCapability("browserVersion", "71.0");
+    capabilities.setCapability("platformName", "windows 10");
+    ```
+3. Run a test to ensure the build passes
+    ```
+    mvn test
+    ```
+4. Use `git stash` or `git commit` to discard or save your changes. Checkout the next branch to proceed to the next exercise
+    ```
+    git checkout 04_configure_atomic_tests
+    ```

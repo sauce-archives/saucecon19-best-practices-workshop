@@ -1,79 +1,75 @@
 # Exercise 6: Test Code Parallelization
-## Part One: Configure `DataProvider`
+## Part One: Configure Parallelization in `pom.xml`:
 
 1. Checkout the branch `06_test_parallelization`
-2. In `BaseTest`, add the following `ThreadLocal` declarations:
+2. Open up the `pom.xml` and modify the following `plugin` setting:
+    * Before:
     ```
-    private ThreadLocal<WebDriver> webDriver = new ThreadLocal<WebDriver>();
-    private ThreadLocal<String> sessionId = new ThreadLocal<String>();
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>2.22.1</version>
+    <configuration>
+        <parallel>classes</parallel>
+        <threadCount>1</threadCount>
+        <redirectTestOutputToFile>false</redirectTestOutputToFile>
+    </configuration>
     ```
+    * After:
+    ```
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>2.22.1</version>
+    <configuration>
+        <parallel>methods</parallel>
+        <threadCount>10</threadCount>
+        <redirectTestOutputToFile>false</redirectTestOutputToFile>
+    </configuration>
+    ```
+3. In `BaseTest` change the `"build"` tag so that SauceLabs logs the tests as a different build, for example:
+    * Before:
+    ```
+     sauceOpts.setCapability("build", "saucecon19-best-practices");
+    ```
+    * After:
+    ```
+     sauceOpts.setCapability("build", "saucecon19-best-practices-v0.0.1");
+    ```
+4. Navigate to saucelabs.com and open the Analytics tab. Go to the **Trends** tab: 
     
-3. Add the following object array:
-    ```
-    @DataProvider(name = "hardCodedBrowsers", parallel = true)
-        public static Object[][] sauceBrowserDataProvider(Method method) {
-            return new Object[][]{
-                    new Object[]{"MicrosoftEdge", "14.14393", "Windows 10"},
-                    new Object[]{"firefox", "49.0", "Windows 10"},
-                    new Object[]{"internet explorer", "11.0", "Windows 7"},
-                    new Object[]{"safari", "10.0", "OS X 10.11"},
-                    new Object[]{"chrome", "54.0", "OS X 10.10"},
-                    new Object[]{"firefox", "latest-1", "Windows 7"},
-            };
-        }
-    ```
-4. Create a **`WebDriver`** public method to return the current WebDriver in the thread:
-    ```
-    public WebDriver getWebDriver() { return webDriver.get();
-    ```
-5. Create a **`String`** public method to return the current SauceLabs session ID for the current thread:
-    ```
-    public String getSessionId() { return sessionId.get();
-    ```
-6. Create a new public method that constructs a `RemoteWebDriver` instance that uses the capabilities defined by the browser, version and os parameters defined in the current thread.
-    ```
-     protected void createDriver(String browser, String version, String os, String methodName)
-                throws MalformedURLException {
-    ```
-    * `String browser` Represents the browser type.
-    * `String version` Represents the browser version.
-    * `String os` Represents the operating system.
-    * `methodName` Represents the name of the test case that we can use to identify the test on Sauce Labs.
-    * `MalformedURLException` throws if an error occurs parsing the url
+    ![Trends Tab](images/test-trends.png)
     
-7. Set the `MutableCapabilities caps = new MutableCapabilities();` as follows:
-    ```
-    caps.setCapability("sauce:options", sauceOpts);
-    caps.setCapability(CapabilityType.BROWSER_NAME, browser);
-    caps.setCapability(CapabilityType.VERSION, version);
-    caps.setCapability(CapabilityType.PLATFORM, os);
-    caps.setCapability("name", methodName);
-    ```
+6. Change the **Time** parameter to **Last 15 mins**
     
-8. Launch the remote web browser and set it as the current thread, then set the current session ID.
-    ```
-    webDriver.set(new RemoteWebDriver(new URL(
-        "https://ondemand.saucelabs.com/wd/hub"),caps));
-    ```
+    ![Last 15 Minutes](images/last-15-mins.png)
     
+7. Scroll down to the bottom to **Build and Test Statistics**:
+    
+    ![Test and Build Statistics](images/test-and-build-stats.png)
+    
+8. Your build efficiency should read somewhere around **semi-parallel (44%)**,. Go back to `pom.xml` and change the parallel execution to **`classes`** level, e.g.:
     ```
-    String id = ((RemoteWebDriver) getWebDriver()).getSessionId().toString();
-    sessionId.set(id);
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>2.22.1</version>
+    <configuration>
+        <parallel>classes</parallel>
+        <threadCount>10</threadCount>
+        <redirectTestOutputToFile>false</redirectTestOutputToFile>
+    </configuration>
     ```
-## Part Two: Enable Each `@Test` Method to Accept `DataProvider`
-1. In both `LogInTest` and `InventoryTest` refactor each `@Test` method with the following parameters outlined in the `BaseTest` **`@DataProvider`** annotation. For example:
+9. In `BaseTest` change the `"build"` tag again to compare the differences (make sure you also **"import Maven changes"** whenever changing the `pom.xml`:
+    * Before
     ```
-    @Test(dataProvider = "hardCodedBrowsers")
-    public void logInSuccessfully(String browser, String version, String os, Method method)
-        throws MalformedURLException, InvalidElementStateException, UnexpectedException {
+     sauceOpts.setCapability("build", "saucecon19-best-practices-v0.0.1");
     ```
-2. In each test method add the following code to instantiate a webdriver session from the current driver in the thread:
+    * After
     ```
-    this.createDriver(browser, version, os, method.getName());
-    WebDriver driver = this.getWebDriver();
+     sauceOpts.setCapability("build", "saucecon19-best-practices-v0.0.2");
     ```
-3. Save all and re-run your test:
+10. Save all and re-run your tests:
     ```
     mvn test
     ```
-4. Check your SauceLabs dashboard. You'll notice in the **Automated Tests** tab that each test now runs in parallel.
+    the **Build and Test Statistics** tab should now show the current build runs as **parallelized (100%)** in the **Efficiency** tab:
+
+    ![100% Parallel](images/100-parallel.png)
