@@ -1,89 +1,97 @@
-# Exercise 5: Configure Atomic Tests
-## Part One: Identify Inefficient Tests
-1. Checkout branch `05_configure_atomic_tests`.
-2. Open **`CartTest`** located in `src > test > java > exercises`.
-3. You'll notice that the **`confirmCheckout()`** method instantiates several page objects and depends on several assertions before reaching the actual page under test (**`CartPage`**):
+# Exercise 5: Test Code Parallelization
+## Part One: Configure `DataProvider`
+
+1. Checkout the branch `05_test_parallelization`
+2. In `BaseTest`, add the following `ThreadLocal` declarations:
     ```
-    @Tag(name = "confirmCheckout()")
-    @Test
-    //** Tests checkout process **//*
-    public void confirmCheckout(Method method) {
-        LogInPage logInPage = LogInPage.visit(driver);
-        logInPage.signIn(User.validUser());
-        InventoryPage inventoryPage = InventoryPage.visit(driver);
-        Assert.assertTrue(inventoryPage.isSignedIn());
-        inventoryPage.addAllItems();
-        Assert.assertFalse(inventoryPage.emptyCart());
-        CartPage cartPage = CartPage.visit(driver);
-        cartPage.checkout();
-        Assert.assertTrue(cartPage.hasItems());
-    }
+    private ThreadLocal<WebDriver> webDriver = new ThreadLocal<WebDriver>();
+    private ThreadLocal<String> sessionId = new ThreadLocal<String>();
     ```
-    This approach is under-optimized. In general, our tests shouldn't rely on the assertions of other tests and it's unecessary to travel through the entire customer experience unless you're conducting end-to-end functionality testing. Therefore if we're only testing features on a specific page, we should modify the front-end state of the page using the **`JavaScriptExecutor`**.
     
-    <br />
+3. Add the following object array:
+    ```
+    @DataProvider(name = "hardCodedBrowsers", parallel = true)
+        public static Object[][] sauceBrowserDataProvider(Method method) {
+            return new Object[][]{
+                    new Object[]{"MicrosoftEdge", "14.14393", "Windows 10"},
+                    new Object[]{"firefox", "49.0", "Windows 10"},
+                    new Object[]{"internet explorer", "11.0", "Windows 7"},
+                    new Object[]{"safari", "10.0", "OS X 10.11"},
+                    new Object[]{"chrome", "54.0", "OS X 10.10"},
+                    new Object[]{"firefox", "latest-1", "Windows 7"},
+            };
+        }
+    ```
+4. Create a **`WebDriver`** public method to return the current WebDriver in the thread:
+    ```
+    public WebDriver getWebDriver() { return webDriver.get();
+    ```
+5. Create a **`String`** public method to return the current SauceLabs session ID for the current thread:
+    ```
+    public String getSessionId() { return sessionId.get();
+    ```
+6. Create a new public method that constructs a `RemoteWebDriver` instance that uses the capabilities defined by the browser, version and os parameters defined in the current thread.
+    ```
+     protected void createDriver(String browser, String version, String os, String methodName)
+                throws MalformedURLException {
+    ```
+    * `String browser` Represents the browser type.
+    * `String version` Represents the browser version.
+    * `String os` Represents the operating system.
+    * `methodName` Represents the name of the test case that we can use to identify the test on Sauce Labs.
+    * `MalformedURLException` throws if an error occurs parsing the url
     
-## Part Two: Leverage the `JavascriptExecutor` to Bypass Pages
-1. Open the page object called **`CartPage`** in `src > test > java > pages` and add the following method:
-    ``` 
-    public void setCartState() {
-        driver.navigate().refresh();
-    }
+7. Set the `MutableCapabilities caps = new MutableCapabilities();` as follows:
     ```
-2. In **`setCartState()`** add the following **`JavaScriptExecutor`** command to bypass the **`LogInPage`** status needed to checkout:
+    caps.setCapability("sauce:options", sauceOpts);
+    caps.setCapability(CapabilityType.BROWSER_NAME, browser);
+    caps.setCapability(CapabilityType.VERSION, version);
+    caps.setCapability(CapabilityType.PLATFORM, os);
+    caps.setCapability("name", methodName);
     ```
-    ((JavascriptExecutor)driver)
-        .executeScript("window
-            .sessionStorage
-            .setItem('standard-username', 'standard-user')");
+    
+8. Launch the remote web browser and set it as the current thread, then set the current session ID.
     ```
-3. Then add the **`JavaScriptExecutor`** to bypass adding items to the cart in the **`InventoryPage`**:
+    webDriver.set(new RemoteWebDriver(new URL(
+        "https://ondemand.saucelabs.com/wd/hub"),caps));
     ```
-    ((JavascriptExecutor)driver)
-        .executeScript("window
-            .sessionStorage
-            .setItem('cart-contents', '[4,1]')");
+    
     ```
-4. In **`CartTest`**, refactor the **`confirmCheckout()`** method to the following:
+    String id = ((RemoteWebDriver) getWebDriver()).getSessionId().toString();
+    sessionId.set(id);
     ```
-    @Tag(name = "checkoutTest()")
-    @Test
-    public void checkoutTest() {
-        CartPage cartPage = CartPage.visit(driver);
-        cartPage.setCartState();
-        cartPage.checkout();
-        Assert.assertTrue(cartPage.hasItems());
-    }
+## Part Two: Enable Each `@Test` Method to Accept `DataProvider`
+1. In both `LogInFeatureTest` and `CheckoutFeatureTest` refactor each `@Test` method with the following parameters outlined in the `BaseTest` **`@DataProvider`** annotation. For example:
     ```
-5. Save all and run the following command in your terminal
+    @Test(dataProvider = "hardCodedBrowsers")
+    public void SHouldBeAbleToLogin(String browser, String version, String os, Method method)
+        throws MalformedURLException, InvalidElementStateException, UnexpectedException {
     ```
-    mvn test -Dtest=CartTest
+2. In each test method add the following code to instantiate a webdriver session from the current driver in the thread:
     ```
-6. Final Results
+    this.createDriver(browser, version, os, method.getName());
+    WebDriver driver = this.getWebDriver();
+    ```
+## Part Three: Enable Multi-Threading
+1. In your `pom.xml` file, chang the following tag to allow for a higher thread count:
     * Before:
     ```
-    @Tag(name = "confirmCheckout()")
-    @Test
-    public void confirmCheckout(Method method) {
-        LogInPage logInPage = LogInPage.visit(driver);
-        logInPage.signIn(User.validUser());
-        InventoryPage inventoryPage = InventoryPage.visit(driver);
-        Assert.assertTrue(inventoryPage.isSignedIn());
-        inventoryPage.addAllItems();
-        Assert.assertFalse(inventoryPage.emptyCart());
-        CartPage cartPage = CartPage.visit(driver);
-        cartPage.checkout();
-        Assert.assertTrue(cartPage.hasItems());
-    }
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
+        <configuration>
+            <parallel>classes</parallel>
+            <threadCount>10</threadCount>
+            <redirectTestOutputToFile>false</redirectTestOutputToFile>
+        </configuration>
+    </plugin>
     ```
     * After:
     ```
-    @Tag(name = "checkoutTest()")
-    @Test
-    public void checkoutTest() {
-        CartPage cartPage = CartPage.visit(driver);
-        cartPage.setCartState();
-        cartPage.checkout();
-        Assert.assertTrue(cartPage.hasItems());
-    }
     ```
+2. Save all and re-run your tests:
+    ```
+    mvn test
+    ```
+4. Check your SauceLabs dashboard. You'll notice in the **Automated Tests** tab that each test now runs in parallel.

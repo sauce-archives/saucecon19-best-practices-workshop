@@ -22,7 +22,6 @@ public class LoginFeatureTest extends BaseTest  {
         String password = "secret_sauce";
         loginPage.login(username, password);
 
-        //TODO pay attention to the new assertion
         Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
     }
 }

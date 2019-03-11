@@ -1,79 +1,43 @@
-# Exercise 6: Test Code Parallelization
-## Part One: Configure `DataProvider`
+# Exercise 6: Implement Explicit Waits
+## Part One: Identify Implicit Waits
+1. Checkout branch `06_explicit_waits `.
+2. Open **`LogInPage`** and navigate to the **`logIn`** method.
+3. As it stands, our wait strategy is inefficient because of: **`implicitlyWait`**. This means our session hangs for a broad 5 seconds after the preceding command and adds unecessary overhead to our test execution. A better strategy is to wait until a specific element renders on the page, then proceed to the next command. In other words, our wait strategy should transform as follows:
+    * Before
+    ```
+    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    ```
+    
+    * After
+    ```
+    WebDriverWait wait = new WebDriverWait(driver, 5);
+    wait.until(ExpectedConditions
+            .presenceOfElementLocated(locator));
+    
+    ```
+    However this still adds a bit of duplication. The best strategy is to add the **`WebDriverWait`** command to the **`BasePage`** class to avoid further duplication.
+4. In the **`BasePage`** object, create a method that waits for specific elements to render based on a relevant `locator`. Below is an example of an explicit wait method:
+    ```
+    private void waitForElement(By locator) {
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+        wait.until(ExpectedConditions.
+        presenceOfElementLocated(locator));
+    }
+    ```
+    > Note: the `ExpectedConditions` method must be imported using: `import org.openqa.selenium.support.ui.ExpectedConditions`
+    
+2. In **`BasePage`**, check each method and refactor the following wherever it exists:
+    * Before
+    ```
+    driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    ```
+    * After
+    ```
+    waitForElement(locator);
+    ``` 
 
-1. Checkout the branch `06_test_parallelization`
-2. In `BaseTest`, add the following `ThreadLocal` declarations:
-    ```
-    private ThreadLocal<WebDriver> webDriver = new ThreadLocal<WebDriver>();
-    private ThreadLocal<String> sessionId = new ThreadLocal<String>();
-    ```
-    
-3. Add the following object array:
-    ```
-    @DataProvider(name = "hardCodedBrowsers", parallel = true)
-        public static Object[][] sauceBrowserDataProvider(Method method) {
-            return new Object[][]{
-                    new Object[]{"MicrosoftEdge", "14.14393", "Windows 10"},
-                    new Object[]{"firefox", "49.0", "Windows 10"},
-                    new Object[]{"internet explorer", "11.0", "Windows 7"},
-                    new Object[]{"safari", "10.0", "OS X 10.11"},
-                    new Object[]{"chrome", "54.0", "OS X 10.10"},
-                    new Object[]{"firefox", "latest-1", "Windows 7"},
-            };
-        }
-    ```
-4. Create a **`WebDriver`** public method to return the current WebDriver in the thread:
-    ```
-    public WebDriver getWebDriver() { return webDriver.get();
-    ```
-5. Create a **`String`** public method to return the current SauceLabs session ID for the current thread:
-    ```
-    public String getSessionId() { return sessionId.get();
-    ```
-6. Create a new public method that constructs a `RemoteWebDriver` instance that uses the capabilities defined by the browser, version and os parameters defined in the current thread.
-    ```
-     protected void createDriver(String browser, String version, String os, String methodName)
-                throws MalformedURLException {
-    ```
-    * `String browser` Represents the browser type.
-    * `String version` Represents the browser version.
-    * `String os` Represents the operating system.
-    * `methodName` Represents the name of the test case that we can use to identify the test on Sauce Labs.
-    * `MalformedURLException` throws if an error occurs parsing the url
-    
-7. Set the `MutableCapabilities caps = new MutableCapabilities();` as follows:
-    ```
-    caps.setCapability("sauce:options", sauceOpts);
-    caps.setCapability(CapabilityType.BROWSER_NAME, browser);
-    caps.setCapability(CapabilityType.VERSION, version);
-    caps.setCapability(CapabilityType.PLATFORM, os);
-    caps.setCapability("name", methodName);
-    ```
-    
-8. Launch the remote web browser and set it as the current thread, then set the current session ID.
-    ```
-    webDriver.set(new RemoteWebDriver(new URL(
-        "https://ondemand.saucelabs.com/wd/hub"),caps));
-    ```
-    
-    ```
-    String id = ((RemoteWebDriver) getWebDriver()).getSessionId().toString();
-    sessionId.set(id);
-    ```
-## Part Two: Enable Each `@Test` Method to Accept `DataProvider`
-1. In both `LogInTest` and `InventoryTest` refactor each `@Test` method with the following parameters outlined in the `BaseTest` **`@DataProvider`** annotation. For example:
-    ```
-    @Test(dataProvider = "hardCodedBrowsers")
-    public void logInSuccessfully(String browser, String version, String os, Method method)
-        throws MalformedURLException, InvalidElementStateException, UnexpectedException {
-    ```
-2. In each test method add the following code to instantiate a webdriver session from the current driver in the thread:
-    ```
-    this.createDriver(browser, version, os, method.getName());
-    WebDriver driver = this.getWebDriver();
-    ```
-3. Save all and re-run your test:
-    ```
-    mvn test
-    ```
-4. Check your SauceLabs dashboard. You'll notice in the **Automated Tests** tab that each test now runs in parallel.
+3. Ensure each command replacement has a relevant `locator`
+4. Save and run `mvn test`
+5. Checkout branch `05_configure_atomic_tests` to see the answers.
+
+<br />
