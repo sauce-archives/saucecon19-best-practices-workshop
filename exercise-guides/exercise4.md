@@ -1,24 +1,25 @@
 # Exercise 4: Configure Atomic Tests
 
-## Part One: Modify `CheckoutPage`
+## Part One: Modify `ConfirmationPage`
 1. Checkout the branch `04_configure_atomic_tests`.
-2. Open `LoginPage` in `src > test > java > pages`.
+2. Open `ConfirmationPage` in `src > test > java > pages`.
 3. Add the following class methods:
     ```
     public void visit() {
-        driver.get("https://www.saucedemo.com/cart.html");
-    }
-    ```
-    ```
-    public void checkout() {
-        String checkoutLink = "cart_checkout_link";
-        driver.findElement(By.className(checkoutLink)).click()
+        driver.get("https://www.saucedemo.com/checkout-step-two.html");
     }
     ```
     ```
     public Boolean hasItems() {
         String cartBadge = "shopping_cart_badge";
         return Integer.parseInt(driver.findElement(By.className(cartBadge)).getText()) > 0;
+    }
+    ```
+    ```
+    public CheckoutCompletePage finishCheckout() {
+        String checkoutLink = "cart_checkout_link";
+        driver.findElement(By.className(checkoutLink)).click();
+        return new CheckoutCompletePage;
     }
     ```
 4. Open **`CheckoutFeatureTest`** located in `src > test > java > exercises`.
@@ -32,7 +33,7 @@ This approach is under-optimized because our tests shouldn't rely on the asserti
 <br />
     
 ## Part Two: Implement the `JavascriptExecutor` to Bypass Pages
-1. Go back to **`CheckoutPage`** and add the following class method:
+1. Go back to **`ConfirmationPage`** and add the following class method:
     ``` 
     public void setCartState() {
         driver.navigate().refresh();
@@ -52,11 +53,11 @@ This approach is under-optimized because our tests shouldn't rely on the asserti
     public void ShouldBeAbleToCheckoutWithItems() {
         // wait 5 seconds
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
-        CheckoutPage checkoutPage = new CheckoutPage(driver);
-        checkoutPage.visit();
-        checkoutPage.setCartState();
-        checkoutPage.checkout();
-        Assert.assertTrue(checkoutPage.hasItems());
+        ConfirmationPage confirmationPage = new ConfirmationPage(driver);
+        confirmationPage.visit();
+        confirmationPage.setCartState();
+        confirmationPage.checkout();
+        Assert.assertTrue(confirmationPage.hasItems());
     }
     ```
 5. Save all and run the following command to ensure the build passes:
@@ -65,5 +66,5 @@ This approach is under-optimized because our tests shouldn't rely on the asserti
     ```
 6. Use `git stash` or `git commit` to discard or save your changes. Checkout the next branch to proceed to the next exercise
     ```
-    git checkout 05_test_parallelization
+    git checkout 05_create_base_page
     ```

@@ -11,7 +11,7 @@ public class LoginFeatureTest extends BaseTest  {
     @Test
     public void ShouldBeAbleToLogin() {
 
-        // wait 5 seconds
+        // TODO convert to explicit wait and remove duplication
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
         //navigate to the url of the Sauce Labs Sample app
         LoginPage loginPage = new LoginPage(driver);

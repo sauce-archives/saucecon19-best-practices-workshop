@@ -4,18 +4,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
-public class ConfirmationPage {
-    //TODO duplication in the driver properties
-    private final WebDriver driver;
-
+public class ConfirmationPage extends BasePage {
     public ConfirmationPage(WebDriver driver) {
-        this.driver = driver;
+        super(driver);
     }
-
-    //TODO duplication between this and LoginPage
     public void visit()
     {
-        //TODO duplication in URL with LoginPage
         driver.navigate().to("https://www.saucedemo.com/checkout-step-two.html");
     }
 

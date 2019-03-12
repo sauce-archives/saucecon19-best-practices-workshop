@@ -1,6 +1,5 @@
 package exercises;
 
-import org.openqa.selenium.By;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.CheckoutCompletePage;
@@ -14,7 +13,7 @@ public class CheckoutFeatureTest extends BaseTest{
     @Test
     public void ShouldBeAbleToCheckoutWithItems() {
 
-        // TODO deal with this in the future: wait 5 seconds
+        // TODO convert to explicit wait and remove duplication
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
 
         ConfirmationPage confirmationPage = new ConfirmationPage(driver);
