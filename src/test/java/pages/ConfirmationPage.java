@@ -3,6 +3,8 @@ package pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 public class ConfirmationPage extends BasePage {
     public ConfirmationPage(WebDriver driver) {
@@ -25,8 +27,9 @@ public class ConfirmationPage extends BasePage {
     }
     public CheckoutCompletePage FinishCheckout()
     {
-        String finished = "a.cart_checkout_link";
-        driver.findElement(By.cssSelector(finished)).click();
+        String finished = ".btn_action.cart_button";
+        WebElement finishButton = driver.findElement(By.cssSelector(finished));
+        finishButton.click();
         return new CheckoutCompletePage(driver);
     }
 }
