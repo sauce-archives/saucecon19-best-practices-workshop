@@ -19,7 +19,6 @@ public class CheckoutFeatureTest extends BaseTest{
         confirmationPage.setPageState();
         Assert.assertTrue(confirmationPage.hasItems());
         CheckoutCompletePage completePage = confirmationPage.FinishCheckout();
-        // assert that the test is finished by checking the last page's URL
         Assert.assertTrue(completePage.IsLoaded());
     }
 
