@@ -5,11 +5,18 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import javax.xml.bind.Element;
 
 public class ConfirmationPage extends BasePage {
     public ConfirmationPage(WebDriver driver) {
         super(driver);
     }
+    //TODO the back part of the URL is being duplicated and can probably be extracted into
+    //a property that keeps track of checkout-step-two.html
     public void visit()
     {
         driver.navigate().to("https://www.saucedemo.com/checkout-step-two.html");
@@ -31,5 +38,10 @@ public class ConfirmationPage extends BasePage {
         WebElement finishButton = driver.findElement(By.cssSelector(finished));
         finishButton.click();
         return new CheckoutCompletePage(driver);
+    }
+
+    public boolean IsLoaded() {
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        return wait.until(ExpectedConditions.urlContains("checkout-step-two.html"));
     }
 }

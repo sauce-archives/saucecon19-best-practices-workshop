@@ -1,6 +1,8 @@
 package pages;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class CheckoutCompletePage extends BasePage{
 
@@ -10,6 +12,7 @@ public class CheckoutCompletePage extends BasePage{
 
     public boolean IsLoaded()
     {
-        return driver.getCurrentUrl().contains("https://www.saucedemo.com/checkout-complete.html");
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        return wait.until(ExpectedConditions.urlContains("checkout-complete.html"));
     }
 }
