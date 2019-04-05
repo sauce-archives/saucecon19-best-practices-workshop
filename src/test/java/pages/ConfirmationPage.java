@@ -31,7 +31,7 @@ public class ConfirmationPage {
     }
     public CheckoutCompletePage FinishCheckout()
     {
-        String finished = "a.cart_checkout_link";
+        String finished =".btn_action.cart_button";
         driver.findElement(By.cssSelector(finished)).click();
         return new CheckoutCompletePage(driver);
     }
