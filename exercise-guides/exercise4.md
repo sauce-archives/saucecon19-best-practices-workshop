@@ -1,9 +1,31 @@
 # Exercise 4: Configure Atomic Tests
 
-## Part One: Modify `ConfirmationPage`
+## Part One: Create `CheckoutCompletePage`
 1. Checkout the branch `04_configure_atomic_tests`.
-2. Open `ConfirmationPage` in `src > test > java > pages`.
-3. Add the following class methods:
+2. In `src > test > java > pages`, create a new class called `CheckoutCompletePage`
+3. Add the following:
+    ```
+    public class CheckoutCompletePage {
+        private final WebDriver driver;
+
+        public CheckoutCompletePage(WebDriver driver) {
+            this.driver = driver;
+        }
+    }
+    ```
+4. Add a new class method called `IsLoaded()` to confirm the correct checkout page is loaded:
+    ```
+    public boolean IsLoaded()
+    {
+        return driver.getCurrentUrl().contains("https://www.saucedemo.com/checkout-complete.html");
+    }
+    ```
+    
+<br />
+
+## Part Two: Modify `ConfirmationPage`
+1. Open `ConfirmationPage` in `src > test > java > pages`.
+2. Add the following class methods:
     ```
     public void visit() {
         driver.get("https://www.saucedemo.com/checkout-step-two.html");
@@ -16,14 +38,15 @@
     }
     ```
     ```
-    public CheckoutCompletePage finishCheckout() {
-        String checkoutLink = "cart_checkout_link";
-        driver.findElement(By.className(checkoutLink)).click();
-        return new CheckoutCompletePage;
+   public CheckoutCompletePage FinishCheckout()
+    {
+        String finished =".btn_action.cart_button";
+        driver.findElement(By.cssSelector(finished)).click();
+        return new CheckoutCompletePage(driver);
     }
     ```
-4. Open **`CheckoutFeatureTest`** located in `src > test > java > exercises`.
-5. You'll notice that the **`ShouldBeAbleToCheckout()`** class method steps through many pages to get to the checkout function. The existing test flow works like this:
+3. Open **`CheckoutFeatureTest`** located in `src > test > java > exercises`.
+4. You'll notice that the **`ShouldBeAbleToCheckout()`** class method steps through many pages to get to the checkout function. The existing test flow works like this:
     * User logs in
     * Adds some items to the cart
     * Clicks the cart icon to proceed to checkout
@@ -32,14 +55,14 @@ This approach is under-optimized because our tests shouldn't rely on the asserti
     
 <br />
     
-## Part Two: Implement the `JavascriptExecutor` to Bypass Pages
+## Part Three: Implement the `JavascriptExecutor` to Bypass Pages
 1. Go back to **`ConfirmationPage`** and add the following class method:
     ``` 
-    public void setCartState() {
+    public void setPageState() {
         driver.navigate().refresh();
     }
     ```
-2. In **`setCartState()`** add the following **`JavaScriptExecutor`** command to bypass logging in through the **`LoginPage`** object:
+2. In **`setPageState()`** add the following **`JavaScriptExecutor`** command to bypass logging in through the **`LoginPage`** object:
     ```
     ((JavascriptExecutor)driver).executeScript("window.sessionStorage.setItem('standard-username', 'standard-user')");
     ```
@@ -53,11 +76,15 @@ This approach is under-optimized because our tests shouldn't rely on the asserti
     public void ShouldBeAbleToCheckoutWithItems() {
         // wait 5 seconds
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
+
         ConfirmationPage confirmationPage = new ConfirmationPage(driver);
         confirmationPage.visit();
-        confirmationPage.setCartState();
-        confirmationPage.checkout();
+        confirmationPage.setPageState();
         Assert.assertTrue(confirmationPage.hasItems());
+
+        CheckoutCompletePage completePage = confirmationPage.FinishCheckout();
+        // assert that the test is finished by checking the last page's URL
+        Assert.assertTrue(completePage.IsLoaded());
     }
     ```
 5. Save all and run the following command to ensure the build passes:

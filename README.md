@@ -16,6 +16,7 @@ In order to complete these exercises you must complete the following prerequisit
 * Install Git
 * Install IntelliJ
 * Install JDK
+* Install Maven
 * Setup Project
 
 Once your test environment is up and running, refer to the [exercise guides](exercise-guides/getting-started.md) to begin the exercises.
@@ -93,73 +94,60 @@ Double-click the installer package to begin the installation.
 5. Double-click the installer package to begin the installation. You should accept all the default settings.
 <br />
 
+### Install Maven
+
+Maven is a build automation and project management tool use for managing project builds, dependencies, and documentation. It uses a project object model (pom.xml) to manage Java-based projects. With our use case, it's very useful for configuring and managing test suites.
+
+#### MacOSX:
+
+1. Go to Maven Apache website and [download](https://maven.apache.org/install.html) the following package: `apache-maven-<version>-bin.tar.gz`
+2. Extract the archive
+    ```
+    $ tar -xvf apache-maven-<version>-bin.zip
+    ```
+3. Add the `bin` directory of the extracted directory (`apache-maven-<version>`) to the `PATH` variable:
+    ```
+    $ export M2=$M2_HOME/bin
+    $ export PATH=$M2:$JAVA_HOME/bin:$PATH
+    ```
+    > WARNING!: Make sure you've set `JAVA_HOME` othewise `mvn` commands won't run
+
+4. Check to see if maven installed correctly:
+    ```
+    $ mvn -version
+    ```
+    ```
+    Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T11:41:47-07:00)
+    Maven home: /usr/local/apache-maven-3.6.0
+    Java version: 11.0.2, vendor: Oracle Corporation, runtime: /Library/Java/JavaVirtualMachines/jdk-11.0.2.jdk/Contents/Home
+    Default locale: en_US, platform encoding: UTF-8
+    OS name: "mac os x", version: "10.13.6", arch: "x86_64", family: "mac"
+    ```
+
+#### Windows:
+
+1. Go to Maven Apache website and [download](https://maven.apache.org/install.html) the following package: `apache-maven-<version>-bin.zip`
+2. Unpack the archive using an archive tool (for example WinZip)
+3. Add the unpacked distribution’s `bin` directory to your user `PATH` environment variable by:
+    1. Open up the system properties (WinKey + Pause) 
+    2. Select the **Advanced** tab, and the **Environment Variables** button
+    3. Add/Select the **`PATH`** variable in the user variables with the value:
+        ```
+        C:\Program Files\apache-maven-3.6.0\bin
+        ```
+4. Open a new command prompt (Winkey + R then type cmd) and run `mvn -v` to verify the installation.
+
 ### Setup the Project
 
 #### Ensure IntelliJ is Correctly Configured:
 
-1. **Run Hello World**
-    * In IntelliJ, select **File > New > Project.**
-    * In the **New Project** dialog window, select **Java** (default).
-    * IntelliJ should automatically detect the JDK and appear in the **Project SDK** field. If you don't see the JDK, select **New** and navigate to where you installed the JDK. 
-    * Select **Next**, then select **Create project from template > Java Hello World.**
-    * Name the project **SauceDemo** and select **Finish.** 
-        > you can also decide whether or not to display IntelliJ tool tips.
-    * From the main toolbar, select **Run > Run 'Main'**.
-        > In the main console at the bottom the words ` Hello World!` should appear, along with ` Process finished with exit code 0`. 
-
-2. **Configure the Selenium Standalone Server**
-    * Open a browser and navigate to the [SeleniumHQ Downloads page](https://www.seleniumhq.org/download/).
-    * Under **Selenium Standalone Server** select the version link to download the file (extract/unzip the archive if necessary).
-        > You can download the package to any directory, just ensure you remember the location when configuring Selenium in IntelliJ.
-    * In IntelliJ, select **File > Project Structure > Modules.**
-    * Select the **Dependencies** tab and navigate to the bottom of the window.
-    * Select the **+** symbol, followed by **JARs or Directories.**
-    * Navigate to the location of the **Selenium .jar** file and select **Open.**
-    * Select **Apply** followed by **OK.**
-    * In the **Project** pane of IntelliJ, select the triangle next to **External Libraries**
-        > You should see the Selenium Standalone Server `.jar` file
-
-3. **Configure the TestNG Framework**
-    * In IntelliJ, select **File > Project Structure > Modules.**
-    * Select the **Dependecies** tab and navigate to the bottom of the window.
-    * elect the **+** symbol, followed by **JARs or Directories.**
-    * Navigate to `Applications/IntelliJ IDEA CE/Contents/plugins/lib/`
-    * Select both `testng-plugin.jar` and `testng.jar`, select **Apply > OK.**
-    * In the **Project** pane of IntelliJ, select the triangle next to **External Libraries**
-        > You should see the TestNG `.jar` files
-        
-#### Run The Sample Project in IntelliJ:
-4. **Add the Test Script**
-    * In the **Project** pane of IntelliJ, right-click on **src,** select **New > Java Class.**
-    * Name the class ` InstantJavaTestNGTest `, then select **OK.**
-    * Download the test script from [here](https://github.com/saucelabs-training/demo-java/blob/master/InstantSauceTest.java).
-    * In IntelliJ, delete any code from your default class and paste in the test script
-        >To run tests on Sauce Labs, you must aquire your user name and access key 
-
-5. **Configuring your Sauce Labs Credentials**
-    * Login to [www.saucelabs.com](https://app.saucelabs.com/login).
-    > If you don't have a Sauce Labs account, create a free trial [here](https://signup.saucelabs.com/signup/trial)
-    * In the upper-right corner, select the down arrow next to your name.
-    * In the drop down menu, select **User Settings.**
-    * Copy and paste both your **`Username`** and **`Access Key`** to your clipboard
-    * In IntelliJ, replace the below strings with your **`Username`** and **`Access Key`**
-        ```
-        String sauceUserName = "YOUR USER NAME";
-        String sauceAccessKey = "YOUR ACCESS KEY";
-        ```
-6. **Running the Test on Sauce Labs**
-    * In IntelliJ, select the **`InstantJavaTestNGTest`** class, right-click anywhere, select **`Run shouldOpenSafari()`**, and check the console at the bottom of the window.
-    * You should see the following in the IntelliJ console:
+1. Import the project into IntelliJ as a **Maven Project**.
+2. Click through the prompts, and confirm when it asks to **Import from Sources**
+3. Open a terminal and run the following command to update any package dependencies:
     ```
-    [TestNG] Running:
-        /Users/{user}/Library/Caches/IntelliJIdea2018.3/temp-testng-customsuite.xml
-
+    $ mvn dependency:resolve
     ```
-    * In the Sauce Labs Dashboard, select the **Automated Tests** tab.
-        > The `shouldOpenSafari()` test should appear running.
-    * Once the test completes, select the link for **`shouldOpenSafari()`** check the **Commands** tab to see all `HTTP` requests in screenshot form.
-    * In the **Watch** tab, you can click on the play button to see a full video of the test.
-    * Finally, in IntelliJ you'll see a green check mark next to a message that read something like so:
-        ```
-        Test passed: 1 of 1 test - 17s 750ms
-        ```
+2. Then run the following command:
+    ```
+    $ mvn test
+    ```
