@@ -31,7 +31,7 @@ public class FullJourneyTest {
         capabilities.setCapability("platform", "macOS 10.13");
 
         //sets the browser version to 11.1
-        capabilities.setCapability("version", "58.0");
+        capabilities.setCapability("version", "latest");
 
         //sets your test case name so that it shows up in Sauce Labs
         capabilities.setCapability("name", method.getName());
@@ -42,11 +42,11 @@ public class FullJourneyTest {
 
         //instantiates a remote WebDriver object with your desired capabilities
         driver = new RemoteWebDriver(new URL("https://ondemand.saucelabs.com/wd/hub"), capabilities);
+        System.out.println("creating remote WebDriver and setting capabilities");
 
         //navigate to the url of the Sauce Labs Sample app
         driver.navigate().to("https://www.saucedemo.com");
-        // navigate to desired page
-        driver.get("https://www.saucedemo.com");
+        System.out.println("navigating to web application");
 
         // Specify Data
         String firstname = "john";
