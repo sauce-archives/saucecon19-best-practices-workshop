@@ -19,15 +19,15 @@ public class CheckoutFeatureTest extends BaseTest{
 
         String backpack = "div:nth-child(1) > div.pricebar > button";
         String jacket = "div:nth-child(4) > div.pricebar > button";
-        String cart = "#shopping_cart_container";
-        String rmvBtn = "div:nth-child(4) > div.cart_item_label > div.item_pricebar > button";
-        String continueShopping = "a.cart_cancel_link";
-        String checkoutLink = "a.cart_checkout_link";
+        String cart = "#shopping_cart_container > a > svg";
+        String rmvBtn = "div.cart_list > div.cart_item > div.cart_item_label > div.item_pricebar > button";
+        String continueShopping = "div.cart_footer > a.btn_secondary";
+        String checkoutLink = "div.cart_footer > a.btn_action.checkout_button";
         String firstNameField = "[data-test='firstName']";
         String lastNameField = "[data-test='lastName']";
         String postalField= "[data-test='postalCode']";
         String cartCheckout = "[value='CONTINUE']";
-        String finished = "a.cart_checkout_link";
+        String finished = "div.cart_footer > a.btn_action.cart_button";
         String complete = "https://www.saucedemo.com/checkout-complete.html";
 
         // wait 5 seconds
