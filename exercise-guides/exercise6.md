@@ -5,9 +5,6 @@
 2. Open up the `pom.xml` and modify the following `plugin` setting:
     * Before:
     ```
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <version>2.22.1</version>
     <configuration>
         <parallel>classes</parallel>
         <threadCount>1</threadCount>
@@ -16,9 +13,6 @@
     ```
     * After:
     ```
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <version>2.22.1</version>
     <configuration>
         <parallel>methods</parallel>
         <threadCount>10</threadCount>
