@@ -76,119 +76,33 @@
 
 ## Part Three: Abstract Test Details:
 1. In `src/test/java/exercises/` create a new class called `LoginFeatureTest`.
-2. Create a new class method with the following:
+2. Create a new `@Test` class method called `ShouldBeAbleToLogin`:
     ```
     public class LoginFeatureTest {
         protected WebDriver driver;
+        
         @Test
-        public void ShouldBeAbleToLogin(Method method) 
-            throws MalformedURLException 
-        {
+        public void ShouldBeAbleToLogin(Method method) {
     
         }
     }
     ```
-3. In `FullJourneyTest`, copy everything from:
-    
-    `Line 21`
-    ```
-    // Input your SauceLabs Credentials
-    ```
-    to `Line 87`:
-    ```
-    driver.findElement(By.cssSelector(loginBtn)).click();
-    ```
-    and paste it into the `LoginFeatureTest` class method: `ShouldBeAbleToLogin`
-4. Delete unecessary element locators such as:
-    ```
-     String backpack = "div:nth-child(1) > div.pricebar > button";
-        String jacket = "div:nth-child(4) > div.pricebar > button";
-        String cart = "#shopping_cart_container";
-        String rmvBtn = "div:nth-child(4) > div.cart_item_label > div.item_pricebar > button";
-        String continueShopping = "a.cart_cancel_link";
-        ...
-    ```
-5. Add this `Assertion` at the end of the test:
+3. In `FullJourneyTest`, copy everything related to the login feature
+    and paste it into the `LoginFeatureTest` class method: `ShouldBeAbleToLogin`.
+4. Add this `Assertion` at the end of the `ShouldBeAbleToLogin`:
     ```
     Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
     ```
-6. Run the test:
+5. Run the test:
     ```
     mvn test -Dtest=LoginFeatureTest
     ```
-7. Next we need to create an **`@AfterMethod` to send the test results to Sauce Labs and add a `@BeforeMethod` that takes care of the driver instantiation before we run our test:
-    *   ```
-        @AfterMethod
-        public void teardown(ITestResult result) {
-            ((JavascriptExecutor)driver).executeScript(
-                "sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
-            driver.quit();
-        }
-        ```
-    *   ```
-        @BeforeMethod
-        public void setUp(Method method) throws MalformedURLException
-        {
-            // Input your SauceLabs Credentials
-            String sauceUsername = System.getenv("SAUCE_USERNAME");
-            String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
-
-            MutableCapabilities capabilities = new MutableCapabilities();
-
-            //sets browser to Safari
-            capabilities.setCapability("browserName", "Safari");
-
-            //sets operating system to macOS version 10.13
-            capabilities.setCapability("platform", "macOS 10.13");
-
-            //sets the browser version to 11.1
-            capabilities.setCapability("version", "11.1");
-
-            //sets your test case name so that it shows up in Sauce Labs
-            capabilities.setCapability("name", method.getName());
-            capabilities.setCapability("username", sauceUsername);
-            capabilities.setCapability("accessKey", sauceAccessKey);
-
-            //instantiates a remote WebDriver object with your desired capabilities
-            driver = new RemoteWebDriver(new URL("https://ondemand.saucelabs.com/wd/hub"), capabilities);
-        }
-        ```
-    Your test class should now look like this:
-        ```
-        @Test
-        public void ShouldBeAbleToLogin() {
-
-        //navigate to the url of the Sauce Labs Sample app
-        driver.navigate().to("https://www.saucedemo.com");
-
-        // Ignore the following selectors
-        String username = "standard_user";
-        String password = "secret_sauce";
-        String userField = "[data-test='username']";
-        String passField = "[data-test='password']";
-        String loginBtn = "[value='LOGIN']";
-
-        // wait 5 seconds
-        driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        
-        // send username keystrokes
-        driver.findElement(By.cssSelector(userField)).sendKeys(username);
-
-        // send password keystrokes
-        driver.findElement(By.cssSelector(passField)).sendKeys(password);
-
-        // click login button to submit keystrokes
-        driver.findElement(By.cssSelector(loginBtn)).click();
-
-        // assert that the next page opened
-        Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
-        }
-        ```
-8. Run the final test of this exercise:
+6. Create a **`@BeforeMethod`** that takes care of `WebDriver` instantiation and setting `capabilities` before we run our test, and add an **`@AfterMethod`** to send the test results to Sauce Labs
+7. Run the final test of this exercise:
     ```
     mvn test -Dtest=LoginFeatureTest
     ```
-9. Use `git stash` or `git commit` to discard or save your changes. Checkout the next branch to proceed to the next exercise
+8. Use `git stash` or `git commit` to discard or save your changes. Checkout the next branch to proceed to the next exercise
     ```
     git checkout 02_page_objects
     ```
