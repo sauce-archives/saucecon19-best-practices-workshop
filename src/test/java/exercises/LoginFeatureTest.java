@@ -1,12 +1,14 @@
 package exercises;
 
+import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pages.LoginPage;
 
 import java.util.concurrent.TimeUnit;
 
-public class LoginFeatureTest extends BaseTest  {
+
+public class LoginFeatureTest extends BaseTest {
 
     @Test
     public void ShouldBeAbleToLogin() {
@@ -22,7 +24,6 @@ public class LoginFeatureTest extends BaseTest  {
         String password = "secret_sauce";
         loginPage.login(username, password);
 
-        //TODO pay attention to the new assertion
         Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
     }
 }

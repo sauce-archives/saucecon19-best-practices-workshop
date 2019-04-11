@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 
 public class BaseTest {
     protected WebDriver driver;
+
     @BeforeMethod
     public void setup(Method method) throws MalformedURLException {
         String sauceUsername = System.getenv("SAUCE_USERNAME");
