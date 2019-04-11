@@ -61,13 +61,11 @@
     ![Successful Test Build Info](images/ex1-test-build.png)
     > ** Warning:**
     > If you have problems propogating your envirnoment variables into IntelliJ, try refreshing your by running any of the following commands: 
-    >  * `$ source ~/.bashrc`
-    >  * `$ source ~/.bash_profile`
-    >  * `$ source /etc/profile`
+    >  * Navigate to your home directory `$ cd ~/`
+    >  * Open your bash profile and update it `$ open -e .bash_profile`
     
-    > Or append the details to your `.bash_profile` to set them globally
+    > Details to your `.bash_profile` to set them globally
     > ```
-    >    vim ~/.bash_profile
     >    export SAUCE_USERNAME="xxx"
     >    export SAUCE_ACCESS_KEY="XXXXXXX-XXXX-XXXX-XXXXXXXXXXX"
     >    launchctl setenv SAUCE_USERNAME $SAUCE_USERNAME
