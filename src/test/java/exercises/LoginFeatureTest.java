@@ -29,14 +29,14 @@ public class LoginFeatureTest {
 
         MutableCapabilities capabilities = new MutableCapabilities();
 
-        //sets browser to Safari
-        capabilities.setCapability("browserName", "Safari");
+        //sets browser to Firefox
+        capabilities.setCapability("browserName", "firefox");
 
         //sets operating system to macOS version 10.13
         capabilities.setCapability("platform", "macOS 10.13");
 
         //sets the browser version to 11.1
-        capabilities.setCapability("version", "11.1");
+        capabilities.setCapability("version", "58.0");
 
         //sets your test case name so that it shows up in Sauce Labs
         capabilities.setCapability("name", method.getName());
