@@ -9,7 +9,7 @@ Before you begin, consult the parent [README](../README.md#getting-started-with-
 * [Setup Selenium Project](../README.md#setup-the-project)
 
 
-Download the latest [release](https://github.com/saucelabs-training/Getting-Started-with-Selenium/releases) archive and import the project into your local environment and begin experimenting with creating your own automated Selenium tests! 
+Download the latest [release](https://github.com/saucelabs-training/saucecon19-best-practices-workshop/releases) (`saucecon-bestpractices-workshop-<version>.zip`) archive and import the project into your local environment and begin experimenting with creating your own automated Selenium tests! 
 
 ## Exercise List
 1. [Automate Tests on SauceLabs](exercise1.md)
