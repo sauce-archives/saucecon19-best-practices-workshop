@@ -1,16 +1,20 @@
 # Exercise 3: Remove Duplication
 
 1. Checkout branch `03_remove_duplication`.
-2. Open the new test class called **`CheckoutFeatureTest`** in `src > test > java > exercises`.
-3. There is duplicate code that exists in **`LoginFeatureTest`**, specifically the `setup()` and `teardown()` methods. 
+2. Open **`CheckoutFeatureTest`** in `src > test > java > exercises`. There is duplicate code that exists in **`LoginFeatureTest`**, specifically the `setup()` and `teardown()` methods. 
 4. Create a `BaseTest` class that executes these prerequisite and postrequisite test actions.
-5. Remove the `setup()` and `teardown()` methods from `LoginFeatureTest` and `CheckoutFeatureTest` and place them into `BaseTest`
+5. Migrate the `setup()` and `teardown()` methods from `LoginFeatureTest` and `CheckoutFeatureTest` and place them into `BaseTest`
 6. Back in `LoginFeatureTest` and `CheckoutFeatureTest`, extend `BaseTest` like so:
     ```
     public class LoginFeatureTest extends BaseTest {
     ...
     }
     ```
+7. Also in `LoginFeatureTest` and `CheckoutFeatureTest` remove the following line:
+    ```
+    protected WebDriver driver
+    ```
+    as it's now redundant.
 7. Delete `FullJourneyTest` and test the changes:
     ```
     mvn test
