@@ -47,7 +47,7 @@ public class CheckoutFeatureTest {
         driver = new RemoteWebDriver(new URL("https://ondemand.saucelabs.com/wd/hub"), capabilities);
     }
     @Test
-    public void ShouldBeAbleToCheckoutWithItems() {
+    public void shouldBeAbleToCheckoutWithItems() {
         // wait 5 seconds
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
         LoginPage loginPage = new LoginPage(driver);
