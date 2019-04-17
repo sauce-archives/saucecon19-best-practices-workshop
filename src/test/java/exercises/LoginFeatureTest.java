@@ -13,10 +13,7 @@ public class LoginFeatureTest extends BaseTest  {
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
         LoginPage loginPage = new LoginPage(driver);
         loginPage.visit();
-
-        String username = "standard_user";
-        String password = "secret_sauce";
-        loginPage.login(username, password);
+        loginPage.login("standard_user", "secret_sauce");
 
         Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
     }
