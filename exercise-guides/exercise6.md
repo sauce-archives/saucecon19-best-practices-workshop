@@ -1,7 +1,6 @@
 # Exercise 6: Test Code Parallelization
 ## Part One: Configure Parallelization in `pom.xml`:
 
-1. Checkout the branch `06_test_parallelization`
 2. Open up the `pom.xml` and modify the following `plugin` setting:
     * Before:
     ```
@@ -67,3 +66,4 @@
     the **Build and Test Statistics** tab should now show the current build runs as **parallelized (100%)** in the **Efficiency** tab:
 
     ![100% Parallel](images/100-parallel.png)
+11. Checkout the branch `06_test_parallelization`
