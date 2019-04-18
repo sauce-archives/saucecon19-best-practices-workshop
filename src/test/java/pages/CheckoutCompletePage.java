@@ -11,7 +11,6 @@ public class CheckoutCompletePage extends BasePage {
     }
 
     public boolean isLoaded() {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        return wait.until(ExpectedConditions.urlContains("checkout-complete.html"));
+        return pageWait.until(ExpectedConditions.urlContains("checkout-complete.html"));
     }
 }
