@@ -19,6 +19,7 @@ public class ConfirmationPage extends BasePage {
 
     public void setPageState()
     {
+        //TODO what are you going to do with the JS executor duplication
         ((JavascriptExecutor)driver).executeScript("window.sessionStorage.setItem('standard-username', 'standard-user')");
         ((JavascriptExecutor)driver).executeScript("window.sessionStorage.setItem('cart-contents', '[4,1]')");
         driver.navigate().refresh();
