@@ -19,8 +19,8 @@ public class FullJourneyTest {
     public void fullCustomerJourney(Method method) throws MalformedURLException {
 
         // Input your SauceLabs Credentials
-        String sauceUsername = System.getenv("SAUCE_USERNAME");
-        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
+        String sauceUsername = "SAUCE_USERNAME";
+        String sauceAccessKey = "SAUCE_ACCESS_KEY";
 
         MutableCapabilities capabilities = new MutableCapabilities();
 
