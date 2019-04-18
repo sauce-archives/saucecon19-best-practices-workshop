@@ -1,4 +1,5 @@
 package exercises;
+
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
@@ -7,12 +8,14 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.lang.reflect.Method;
 
 public class BaseTest {
     protected WebDriver driver;
+
     @BeforeMethod
     public void setup(Method method) throws MalformedURLException {
         String sauceUsername = System.getenv("SAUCE_USERNAME");
@@ -30,7 +33,7 @@ public class BaseTest {
         sauceOpts.setCapability("tags", "['best-practices', 'saucecon19']");
 
         MutableCapabilities capabilities = new MutableCapabilities();
-        capabilities.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
+        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOpts);
         capabilities.setCapability("sauce:options", sauceOpts);
         capabilities.setCapability("browserName", "googlechrome");
         capabilities.setCapability("browserVersion", "71.0");
@@ -43,7 +46,7 @@ public class BaseTest {
 
     @AfterMethod
     public void teardown(ITestResult result) {
-        ((JavascriptExecutor)driver).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
+        ((JavascriptExecutor) driver).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
         driver.quit();
     }
 }

@@ -6,7 +6,7 @@ import pages.CheckoutCompletePage;
 import pages.ConfirmationPage;
 
 
-public class CheckoutFeatureTest extends BaseTest{
+public class CheckoutFeatureTest extends BaseTest {
 
     @Test
     public void ShouldBeAbleToCheckoutWithItems() {
@@ -17,7 +17,7 @@ public class CheckoutFeatureTest extends BaseTest{
         confirmationPage.setPageState();
         Assert.assertTrue(confirmationPage.hasItems());
         CheckoutCompletePage completePage = confirmationPage.finishCheckout();
-        Assert.assertTrue(completePage.IsLoaded());
+        Assert.assertTrue(completePage.isLoaded());
     }
 
 }

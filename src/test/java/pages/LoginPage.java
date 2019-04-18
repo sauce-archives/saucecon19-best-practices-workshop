@@ -16,8 +16,7 @@ public class LoginPage extends BasePage {
         return this;
     }
 
-    public InventoryPage login(String username, String password)
-    {
+    public InventoryPage login(String username, String password) {
         String userField = "[data-test='username']";
         String passField = "[data-test='password']";
         String loginBtn = "[value='LOGIN']";

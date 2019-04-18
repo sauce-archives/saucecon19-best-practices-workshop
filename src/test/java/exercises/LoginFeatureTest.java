@@ -5,7 +5,7 @@ import org.testng.annotations.Test;
 import pages.InventoryPage;
 import pages.LoginPage;
 
-public class LoginFeatureTest extends BaseTest  {
+public class LoginFeatureTest extends BaseTest {
 
     @Test
     public void ShouldBeAbleToLogin() {
