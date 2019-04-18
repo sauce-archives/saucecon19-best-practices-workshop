@@ -12,9 +12,10 @@ public class InventoryPage extends BasePage{
         super(driver);
     }
 
-    public boolean IsLoaded() {
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+    //TODO how will you handle the isLoaded method that's in a few pages
+    public boolean isLoaded() {
+        //TODO what are you going to do with the element locators if you keep reusing them in different methods?
         WebElement logo = driver.findElement(By.className("app_logo"));
-        return wait.until(ExpectedConditions.visibilityOf(logo)).isDisplayed();
+        return pageWait.until(ExpectedConditions.visibilityOf(logo)).isDisplayed();
     }
 }

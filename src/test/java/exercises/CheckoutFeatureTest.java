@@ -5,8 +5,6 @@ import org.testng.annotations.Test;
 import pages.CheckoutCompletePage;
 import pages.ConfirmationPage;
 
-import java.util.concurrent.TimeUnit;
-
 
 public class CheckoutFeatureTest extends BaseTest{
 
@@ -14,11 +12,11 @@ public class CheckoutFeatureTest extends BaseTest{
     public void ShouldBeAbleToCheckoutWithItems() {
         ConfirmationPage confirmationPage = new ConfirmationPage(driver);
         confirmationPage.visit();
-        Assert.assertTrue(confirmationPage.IsLoaded());
+        Assert.assertTrue(confirmationPage.isLoaded());
 
         confirmationPage.setPageState();
         Assert.assertTrue(confirmationPage.hasItems());
-        CheckoutCompletePage completePage = confirmationPage.FinishCheckout();
+        CheckoutCompletePage completePage = confirmationPage.finishCheckout();
         Assert.assertTrue(completePage.IsLoaded());
     }
 
