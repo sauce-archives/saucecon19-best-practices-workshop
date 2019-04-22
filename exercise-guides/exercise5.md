@@ -18,19 +18,6 @@ In the following classes:
     * `ConfirmationPage`
     * `InventoryPage`
     * `LoginPage`
-4. Add the following in `BasePage`:
-    ```
-    public class BasePage {
-        public final WebDriver driver;
-        public BasePage(WebDriver driver) {
-            this.driver = driver;
-        }
-    }
-    ```
-5. Extend the `BasePage` object in the other page objects, for example:
-    ```
-    public class CheckoutCompletePage extends BasePage {
-    ```
 6. Save all and run the following command to ensure the build passes:
     ```
     mvn test
