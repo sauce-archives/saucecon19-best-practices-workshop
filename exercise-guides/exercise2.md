@@ -58,26 +58,9 @@
     return new InventoryPage(driver);
     ```
     
-4. Open `LoginFeatureTest`, and add the following to the `ShouldBeAbleToLogin` method:
-    ```
-    import pages.LoginPage;
-    ...
-        @Test
-        public void ShouldBeAbleToLogin() {
+4. Open `LoginFeatureTest`, and create a test method called `ShouldBeAbleToLogin`. 
+This method should use only page objects to perform our login operations.
 
-            // wait 5 seconds
-            driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS) ;
-            //navigate to the url of the Sauce Labs Sample app
-            LoginPage loginPage = new LoginPage(driver);
-            loginPage.visit();
-
-            // Ignore the following selectors
-            String username = "standard_user";
-            String password = "secret_sauce";
-            loginPage.login(username, password);
-            Assert.assertEquals("https://www.saucedemo.com/inventory.html", driver.getCurrentUrl());
-        }
-    ```
 5. Save and run `mvn test` to ensure the test still executes:
     ```
     mvn test -Dtest=LoginFeatureTest
