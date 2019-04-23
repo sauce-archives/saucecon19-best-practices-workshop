@@ -69,7 +69,6 @@
     ![100% Parallel](images/100-parallel.png)
     
 ## Part Two: Remove Implicit Waits
-2. Open **`LogInPage`** and navigate to the **`logIn`** method.
 3. As it stands, our wait strategy is inefficient because of: **`implicitlyWait`**.    * Before
     ```
     driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
