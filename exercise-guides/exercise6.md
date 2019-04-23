@@ -67,3 +67,5 @@
     the **Build and Test Statistics** tab should now show the current build runs as **parallelized (100%)** in the **Efficiency** tab:
 
     ![100% Parallel](images/100-parallel.png)
+    
+11. Check out branch `07_cleanup`
