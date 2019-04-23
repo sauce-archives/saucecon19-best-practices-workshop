@@ -66,5 +66,22 @@ This method should use only page objects to perform our login operations.
     mvn test -Dtest=LoginFeatureTest
     ```
 
-<br />
+## Part Three: Create ShouldBeAbleToCheckout test
+Now we will create a full end to end scenario where the user is able to login, add an item to a cart, and checkout with that item.
+
+You are only allowed to use Page Objects for this test. And must follow best practices.
+
+However, your page objects can have duplication throughout for now. The goal is to just replace the Selenium code with Page Objects.
+
+1. Create a new test file called `CheckoutFeatureTest`
+1. Add a new test method `shouldBeAbleToCheckOut`
+1. Copy everything related to the checkout process from `FullJourneyTest`
+This means that you will copy all the code from line 106 until the end
+4. Dont forget to add the new login logic to the test as well
+5. The end result will be a test case where we are logging in, adding an item to a cart, then going through the whole checkout process. Using only Page Objects.
+5. Save and run `mvn test` to ensure the test still executes:
+    ```
+    mvn test -Dtest=CheckoutFeatureTest
+    ```
+
 
