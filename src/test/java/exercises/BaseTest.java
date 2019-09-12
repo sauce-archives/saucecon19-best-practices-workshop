@@ -4,6 +4,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -22,24 +23,21 @@ public class BaseTest {
         String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
 
         ChromeOptions chromeOpts = new ChromeOptions();
-        chromeOpts.setExperimentalOption("w3c", true);
+        chromeOpts.setCapability(CapabilityType.PLATFORM_NAME, "windows 10");
+        chromeOpts.setCapability(CapabilityType.BROWSER_VERSION, "latest");
 
         MutableCapabilities sauceOpts = new MutableCapabilities();
         sauceOpts.setCapability("username", sauceUsername);
         sauceOpts.setCapability("accessKey", sauceAccessKey);
         sauceOpts.setCapability("name", method.getName());
-        sauceOpts.setCapability("seleniumVersion", "3.141.59");
-        sauceOpts.setCapability("build", "saucecon19-best-practices");
-        sauceOpts.setCapability("tags", "['best-practices', 'saucecon19']");
+        sauceOpts.setCapability("build", "best-practices");
+        sauceOpts.setCapability("tags", "['best-practices', 'best-practices']");
 
         MutableCapabilities capabilities = new MutableCapabilities();
-        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOpts);
+        capabilities.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
         capabilities.setCapability("sauce:options", sauceOpts);
-        capabilities.setCapability("browserName", "googlechrome");
-        capabilities.setCapability("browserVersion", "71.0");
-        capabilities.setCapability("platformName", "windows 10");
 
-        String sauceUrl = "https://ondemand.saucelabs.com:443/wd/hub";
+        String sauceUrl = "https://ondemand.saucelabs.com/wd/hub";
         URL url = new URL(sauceUrl);
         driver = new RemoteWebDriver(url, capabilities);
     }
