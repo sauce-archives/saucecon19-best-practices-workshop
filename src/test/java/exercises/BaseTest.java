@@ -37,6 +37,7 @@ public class BaseTest {
         String sauceUrl = "https://ondemand.saucelabs.com/wd/hub";
         URL url = new URL(sauceUrl);
         driver = new RemoteWebDriver(url, capabilities);
+
     }
 
     @AfterMethod
