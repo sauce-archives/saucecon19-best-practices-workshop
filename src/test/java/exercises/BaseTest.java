@@ -1,5 +1,7 @@
 package exercises;
 
+import com.saucelabs.simplesauce.SauceOptions;
+import com.saucelabs.simplesauce.SauceSession;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.WebDriver;
@@ -19,27 +21,13 @@ public class BaseTest {
 
     @BeforeMethod
     public void setup(Method method) throws MalformedURLException {
-        String sauceUsername = System.getenv("SAUCE_USERNAME");
-        String sauceAccessKey = System.getenv("SAUCE_ACCESS_KEY");
+        SauceOptions sauceOptions = new SauceOptions();
+        //TODO needs to be implemented in Simple Sauce
+//        sauceOptions.setTestName(method.getName());
+//        sauceOptions.setBuildName("best-practices");
+//        sauceOptions.setTestTags("['best-practices', 'best-practices']");
 
-        ChromeOptions chromeOpts = new ChromeOptions();
-        chromeOpts.setCapability(CapabilityType.PLATFORM_NAME, "windows 10");
-        chromeOpts.setCapability(CapabilityType.BROWSER_VERSION, "latest");
-
-        MutableCapabilities sauceOpts = new MutableCapabilities();
-        sauceOpts.setCapability("username", sauceUsername);
-        sauceOpts.setCapability("accessKey", sauceAccessKey);
-        sauceOpts.setCapability("name", method.getName());
-        sauceOpts.setCapability("build", "best-practices");
-        sauceOpts.setCapability("tags", "['best-practices', 'best-practices']");
-
-        MutableCapabilities capabilities = new MutableCapabilities();
-        capabilities.setCapability(ChromeOptions.CAPABILITY,  chromeOpts);
-        capabilities.setCapability("sauce:options", sauceOpts);
-
-        String sauceUrl = "https://ondemand.saucelabs.com/wd/hub";
-        URL url = new URL(sauceUrl);
-        driver = new RemoteWebDriver(url, capabilities);
+        driver = new SauceSession(sauceOptions).start();
     }
 
     @AfterMethod
