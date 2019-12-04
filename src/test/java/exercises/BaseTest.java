@@ -18,6 +18,7 @@ import java.net.URL;
 
 public class BaseTest {
     protected WebDriver driver;
+    private SauceSession session;
 
     @BeforeMethod
     public void setup(Method method) throws MalformedURLException {
@@ -26,14 +27,15 @@ public class BaseTest {
 //        sauceOptions.setTestName(method.getName());
 //        sauceOptions.setBuildName("best-practices");
 //        sauceOptions.setTestTags("['best-practices', 'best-practices']");
-
-        driver = new SauceSession(sauceOptions).start();
+        session = new SauceSession(sauceOptions);
+        driver = session.start();
     }
 
     @AfterMethod
     public void teardown(ITestResult result) {
-        ((JavascriptExecutor) driver).executeScript("sauce:job-result=" + (result.isSuccess() ? "passed" : "failed"));
-        driver.quit();
+        String isPassed = result.isSuccess() ? "passed" : "failed";
+        //session.setTestStatus(isPassed);
+        //session.stop(driver);
     }
 }
 
