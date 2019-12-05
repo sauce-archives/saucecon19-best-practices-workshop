@@ -25,6 +25,8 @@ public class BaseTest {
         SauceOptions sauceOptions = new SauceOptions();
         //TODO needs to be implemented in Simple Sauce
 //        sauceOptions.setTestName(method.getName());
+        //TODO this will be set by default through our impl. However, if they want, they can set it, but that's the exception,
+        //not the rule
 //        sauceOptions.setBuildName("best-practices");
 //        sauceOptions.setTestTags("['best-practices', 'best-practices']");
         session = new SauceSession(sauceOptions);
@@ -33,9 +35,8 @@ public class BaseTest {
 
     @AfterMethod
     public void teardown(ITestResult result) {
-        String isPassed = result.isSuccess() ? "passed" : "failed";
-        //session.setTestStatus(isPassed);
-        //session.stop(driver);
+        //String isPassed = result.isSuccess() ? "passed" : "failed";
+        //session.stop(result.isSuccess()); //The better approach
     }
 }
 
