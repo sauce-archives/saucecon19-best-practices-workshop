@@ -17,6 +17,7 @@ import java.net.URL;
 public class BaseTest {
     protected WebDriver driver;
 
+    //TODO Switch away from Test NG and into JUnit
     @BeforeMethod
     public void setup(Method method) throws MalformedURLException {
         String sauceUsername = System.getenv("SAUCE_USERNAME");
